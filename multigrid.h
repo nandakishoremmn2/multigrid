@@ -47,6 +47,12 @@ public:
 	void restrict();
 
 	/**
+		Sets the v to the given value
+		@param val The value to set
+	*/
+	void set_v(real);
+
+	/**
 		Calculates the residue and copies it to temp variable
 	*/
 	void calc_res_to_temp();
@@ -91,6 +97,19 @@ private:
 		RHS of the equation Au=f
 	*/
 	real **f;
+
+	/**
+		Initialises and allocates memory for the pointer variable passed
+		@param var pointer to the variable
+	*/
+	void initialise(real **var);
+
+	/**
+		Does the opposite of initialise
+		@param var pointer to freed
+		@see initialise
+	*/
+	void deallocate(real **var);
 
 	/**
 		Copies values from one grid to another
