@@ -18,9 +18,9 @@ public:
 
 	/**
 		Iterates the grid a given no. of times
-		@param v the no. of iterations to perform
+		@param vn the no. of iterations to perform
 	*/
-	void relax(int v);
+	void relax(int vn);
 
 	/**
 		Returns the size of the grid
