@@ -8,3 +8,4 @@
 !*.h
 !*.cilk
 !*.py
+!makefile
