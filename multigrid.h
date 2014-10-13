@@ -88,6 +88,15 @@ private:
 	*/
 	int n;
 
+	/** 
+		Grid spacing 
+	*/
+	real h;
+	/** 
+		Square of h 
+	*/
+	real h2;
+
 	/**
 		Stores the solution at all levels
 	*/
