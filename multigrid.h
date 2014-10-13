@@ -116,7 +116,7 @@ private:
 		Initialises and allocates memory for the pointer variable passed
 		@param var pointer to the variable
 	*/
-	void initialise(real **var);
+	real **initialise();
 
 	/**
 		Does the opposite of initialise

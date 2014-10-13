@@ -14,9 +14,9 @@ MultiGrid::MultiGrid(int grid_density, int no_of_child_grids)
 	h2 = h*h;
 
 	// Allocate memory for the grid
-	initialise(v);
-	initialise(f);
-	initialise(temp);
+	v = initialise();
+	f = initialise();
+	temp = initialise();
 
 	// Initialise the coarser child grids
 	grid2 = ( no_of_child_grids > 0 ) ? new MultiGrid(grid_density-1, no_of_child_grids-1) : NULL;
@@ -36,9 +36,9 @@ MultiGrid::~MultiGrid()
 /*
 	Private methods
 */
-void MultiGrid::initialise(real **var)
+real **MultiGrid::initialise()
 {
-	var = new real*[n];
+	real **var = new real*[n];
 	for (int i = 0; i < n; ++i)
 	{
 		var[i] = new real[n];
@@ -48,9 +48,10 @@ void MultiGrid::initialise(real **var)
 	{
 		for (int j = 0; j < n; ++j)
 		{
-			var[i] = 0;
+			var[i][j] = 0;
 		}
 	}
+	return var;
 }
 
 void MultiGrid::deallocate(real **var)
