@@ -85,7 +85,7 @@ void MultiGrid::relax(int vn)
 		{
 			for (int j = 1; j < n-1; ++j)
 			{
-				v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] )/4.0;
+				v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] + h2*f[i][j])/4.0;
 			}
 		}
 	}
@@ -99,21 +99,65 @@ int MultiGrid::getSize()
 void MultiGrid::interp()
 {
 	// Interpolate values from *grid2.temp to temp
+	real **temp2 = grid2->temp;
+	int n2 = grid2->getSize();
+
+	for (int i = 0; i < n2-1; ++i)
+	{
+		for (int j = 0; j < n2-1; ++j)
+		{
+			// Between 4 points
+			temp[2*i+1][2*j+1] = ( temp2[i][j] + temp2[i][j+1] + temp2[i+1][j] + temp2[i+1][j+1] ) / 4.0;
+		}
+	}
+
+	for (int i = 0; i < n2-1; ++i)
+	{
+		for (int j = 0; j < n2-1; ++j)
+		{
+			// Between 2 points
+			temp[2*i+1][2*j] = ( temp2[i][j] + temp2[i+1][j] ) / 2.0;
+			temp[2*i][2*j+1] = ( temp2[i][j] + temp2[i][j+1] ) / 2.0;
+		}
+	}
+
+	for (int i = 1; i < n2-1; ++i)
+	{
+		for (int j = 1; j < n2-1; ++j)
+		{
+			temp[2*i][2*j] = temp2[i][j];
+		}
+	}
 }
 
 void MultiGrid::restrict()
 {
 	// Restrict values from temp to *grid2.temp
+	real **temp2 = grid2->temp;
+	int n2 = grid2->getSize();
+
+	for (int i = 1; i < n2-1; ++i)
+	{
+		for (int j = 1; j < n2-1; ++j)
+		{
+			// Weighted average from all 9 points
+			temp2[i][j] = 4.0*temp[2*i][2*j];
+			temp2[i][j] += 2.0*( temp[2*i+1][2*j] + temp[2*i-1][2*j] + temp[2*i][2*j-1] + temp[2*i][2*j+1] );
+			temp2[i][j] += 1.0*( temp[2*i+1][2*j+1] + temp[2*i-1][2*j-1] + temp[2*i+1][2*j-1] + temp[2*i-1][2*j+1] );
+			temp2[i][j] /= 16.0;
+		}
+	}
+
 }
 
 void MultiGrid::apply_boundary_conditions()
 {
 	for (int i = 0; i < n; ++i)
 	{
-		v[i][0] = (real)i*h2/n;
-		v[0][i] = (real)i*h2/n;
-		v[i][n-1] = 1.0 - (real)i*h2/n;
-		v[n-1][0] = 1.0 - (real)i*h2/n;
+		v[0][i] = v[i][0] = (real)i*i*h2;
+		// v[0][i] = (real)i*i*h2;
+		v[n-1][i] = v[i][n-1] = 1.0 - (real)i*i*h2;
+		// v[n-1][i] = 1.0 - (real)i*i*h2;
 	}
 }
 
@@ -148,31 +192,19 @@ void MultiGrid::calc_res_to_temp()
 
 void MultiGrid::copy_temp_to_f()
 {
-	for (int i = 0; i < n; ++i)
-	{
-		for (int j = 0; j < n; ++j)
-		{
-			f[i][j] = temp[i][j];
-		}
-	}
+	copy(temp, f);
 }
 
 void MultiGrid::copy_v_to_temp()
 {
-	for (int i = 0; i < n; ++i)
-	{
-		for (int j = 0; j < n; ++j)
-		{
-			temp[i][j] = v[i][j];
-		}
-	}
+	copy(v, temp);
 }
 
 void MultiGrid::add_temp_to_v()
 {
-	for (int i = 0; i < n; ++i)
+	for (int i = 1; i < n-1; ++i)
 	{
-		for (int j = 0; j < n; ++j)
+		for (int j = 1; j < n-1; ++j)
 		{
 			v[i][j] = v[i][j] + temp[i][j];
 		}

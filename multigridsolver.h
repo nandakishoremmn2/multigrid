@@ -6,9 +6,18 @@
 class MultiGridSolver
 {
 public:
+	/**
+		Initialises the solver
+		@param grid_density The no. of grid points on the finest grid = ( 2^grid_density + 1 )^2
+		@param no_of_grids The no. of grids to use ( < grid_density )
+	*/
 	MultiGridSolver(int grid_density, int no_of_grids);
 	~MultiGridSolver();
 
+	/**
+		Solve the equation on the given grid upto a given tolerance level
+		@param tol tolerance level
+	*/
 	void solve(real tol);
 
 private:
