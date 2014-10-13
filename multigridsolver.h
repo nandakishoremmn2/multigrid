@@ -37,7 +37,7 @@ private:
 		FMG scheme
 		Depends on V cycle
 	*/
-	void FMG(MultiGrid *grid);
+	void FMG(MultiGrid *grid, int v0);
 
 };
 
