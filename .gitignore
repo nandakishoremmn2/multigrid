@@ -1,0 +1,10 @@
+#Ignore everything
+*
+
+#Except
+!.gitignore
+!*.cpp
+!*.c
+!*.h
+!*.cilk
+!*.py
