@@ -18,15 +18,12 @@ MultiGridSolver::~MultiGridSolver()
 
 void MultiGridSolver::solve(real tol)
 {
-	V(Grid);
+	V(Grid, 1, 10);
 	// Grid->save_grid("out.dat");
 }
 
-void MultiGridSolver::V(MultiGrid *grid)
+void MultiGridSolver::V(MultiGrid *grid, int v1, int v2)
 {
-	int v1 = 3;
-	int v2 = 5;
-
 	MultiGrid *cgrid = grid->grid2; // coarser grid
 
 	grid->relax(v1);
@@ -42,7 +39,7 @@ void MultiGridSolver::V(MultiGrid *grid)
 		cgrid->set_v(0);
 
 		// Continue V cycle
-		V(cgrid);
+		V(cgrid, v1, v2);
 
 		// Interpolate and add error to fine grid
 		cgrid->copy_v_to_temp();

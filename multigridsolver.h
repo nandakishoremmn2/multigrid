@@ -26,7 +26,7 @@ private:
 	/**
 		V cycle scheme
 	*/
-	void V(MultiGrid *grid);
+	void V(MultiGrid *grid, int v1, int v2);
 
 	/**
 		W cycle scheme
