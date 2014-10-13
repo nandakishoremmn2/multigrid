@@ -107,9 +107,7 @@ real MultiGrid::relax(int vn)
 	}
 
 	calc_res_to_temp();
-	real norm2val = norm2(temp);
-	std::cout<<norm2val<<"\n";
-	return norm2val;
+	return norm2(temp);
 }
 
 int MultiGrid::getSize()
