@@ -1,3 +1,6 @@
+#ifndef MULTIGRIDSOLVER_H
+#define MULTIGRIDSOLVER_H
+
 #include "multigrid.h"
 
 class MultiGridSolver
@@ -28,3 +31,5 @@ private:
 	void FMG(MultiGrid *grid);
 
 };
+
+#endif // MULTIGRIDSOLVER_H
