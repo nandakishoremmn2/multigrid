@@ -47,6 +47,11 @@ public:
 	void restrict();
 
 	/**
+		Assigns the boundary values
+	*/
+	void apply_boundary_conditions();
+
+	/**
 		Sets the v to the given value
 		@param val The value to set
 	*/

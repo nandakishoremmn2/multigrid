@@ -33,7 +33,6 @@ MultiGrid::~MultiGrid()
 	delete grid2;
 }
 
-
 /*
 	Private methods
 */
@@ -100,14 +99,43 @@ void MultiGrid::restrict()
 	// Restrict values from temp to *grid2.temp
 }
 
+void MultiGrid::apply_boundary_conditions()
+{
+	for (int i = 0; i < n; ++i)
+	{
+		v[i][0] = (real)i*h2/n;
+		v[0][i] = (real)i*h2/n;
+		v[i][n-1] = 1.0 - (real)i*h2/n;
+		v[n-1][0] = 1.0 - (real)i*h2/n;
+	}
+}
+
+void MultiGrid::set_v(real val)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			v[i][j] = val;
+		}
+	}
+}
+
 void MultiGrid::calc_res_to_temp()
 {
 	for (int i = 1; i < n-1; ++i)
 	{
 		for (int j = 1; j < n-1; ++j)
 		{
+			// r = f - Av
 			temp[i][j] = f[i][j] - ( 4*v[i][j] - ( v[i+1][j+1] + v[i-1][j-1] + v[i-1][j+1] + v[i+1][j-1] ) )/h2;
 		}
+	}
+
+	// Set residual value at boundary to zero
+	for (int i = 0; i < n; ++i)
+	{
+		temp[0][i] = temp[i][0] = temp[n-1][i] = temp[i][n-1] = 0;
 	}
 }
 
