@@ -19,8 +19,8 @@ MultiGridSolver::~MultiGridSolver()
 void MultiGridSolver::solve(real tol)
 {
 	// V(Grid, 1, 5);
-	// W(Grid, 1, 5, 2);
-	FMG(Grid, 1);
+	W(Grid, 2, 5, 5);
+	// FMG(Grid, 5, 1, 5);
 	// Grid->save_grid("out.dat");
 }
 
@@ -83,7 +83,7 @@ void MultiGridSolver::W(MultiGrid *grid, int v1, int v2, int mu)
 	grid->relax(v2);	
 }
 
-void MultiGridSolver::FMG(MultiGrid *grid, int v0)
+void MultiGridSolver::FMG(MultiGrid *grid, int v0, int v1, int v2)
 {
 	MultiGrid *cgrid = grid->grid2; // coarser grid
 
@@ -96,7 +96,7 @@ void MultiGridSolver::FMG(MultiGrid *grid, int v0)
 		cgrid->copy_temp_to_f();
 
 		// FMG cycle on coarser grid
-		FMG(cgrid, v0);
+		FMG(cgrid, v0, v1, v2);
 
 		// Interpolate solution ('v') to fine grid
 		cgrid->copy_v_to_temp();
@@ -112,6 +112,6 @@ void MultiGridSolver::FMG(MultiGrid *grid, int v0)
 	// Perform V cycle v0 times more times
 	for (int i = 0; i < v0; ++i)
 	{
-		V(grid, 1, 5);	
+		V(grid, v1, v2);	
 	}
 }
