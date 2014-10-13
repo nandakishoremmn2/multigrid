@@ -18,7 +18,8 @@ MultiGridSolver::~MultiGridSolver()
 
 void MultiGridSolver::solve(real tol)
 {
-	V(Grid, 1, 10);
+	// V(Grid, 1, 5);
+	W(Grid, 1, 5, 2);
 	// Grid->save_grid("out.dat");
 }
 
@@ -50,9 +51,35 @@ void MultiGridSolver::V(MultiGrid *grid, int v1, int v2)
 	grid->relax(v2);
 }
 
-void MultiGridSolver::W(MultiGrid *grid)
+void MultiGridSolver::W(MultiGrid *grid, int v1, int v2, int mu)
 {
-	
+	MultiGrid *cgrid = grid->grid2; // coarser grid
+
+	grid->relax(v1);
+	 // If coarser grid exists recursively apply V()
+	if (cgrid)
+	{
+		// Restrict residue to coarse grid
+		grid->calc_res_to_temp();
+		grid->restrict();
+		cgrid->copy_temp_to_f();
+
+		// Set error 0 on coarse grid
+		cgrid->set_v(0);
+
+		// Continue M cycle 'mu' times
+		for (int i = 0; i < mu; ++i)
+		{
+			W(cgrid, v1, v2, mu);
+		}
+
+		// Interpolate and add error to fine grid
+		cgrid->copy_v_to_temp();
+		grid->interp();
+		grid->add_temp_to_v();
+	}
+	// Relax fine grid few more times
+	grid->relax(v2);	
 }
 
 void MultiGridSolver::FMG(MultiGrid *grid)

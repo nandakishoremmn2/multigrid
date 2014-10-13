@@ -31,7 +31,7 @@ private:
 	/**
 		W cycle scheme
 	*/
-	void W(MultiGrid *grid);
+	void W(MultiGrid *grid, int v1, int v2, int mu);
 
 	/**
 		FMG scheme
