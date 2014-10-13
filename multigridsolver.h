@@ -6,7 +6,7 @@
 class MultiGridSolver
 {
 public:
-	MultiGridSolver(real grid_density, int no_of_grids);
+	MultiGridSolver(int grid_density, int no_of_grids);
 	~MultiGridSolver();
 
 	void solve(real tol);
