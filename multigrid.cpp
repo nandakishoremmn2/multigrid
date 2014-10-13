@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include "multigrid.h"
 #include <cmath>
 #include <cstdlib>
@@ -74,10 +75,25 @@ void MultiGrid::copy(real **src, real **dest)
 	}
 }
 
+real MultiGrid::norm2(real **data)
+{
+	// L-squared norm
+	real norm2val = 0;
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			norm2val += data[i][j]*data[i][j]*h2;
+		}
+	}
+
+	return sqrt(norm2val);
+}
+
 /*
 	Public methods
 */
-void MultiGrid::relax(int vn)
+real MultiGrid::relax(int vn)
 {
 	for (int k = 0; k < vn; ++k)
 	{
@@ -89,6 +105,11 @@ void MultiGrid::relax(int vn)
 			}
 		}
 	}
+
+	calc_res_to_temp();
+	real norm2val = norm2(temp);
+	std::cout<<norm2val<<"\n";
+	return norm2val;
 }
 
 int MultiGrid::getSize()

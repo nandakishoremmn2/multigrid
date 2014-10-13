@@ -19,8 +19,9 @@ public:
 	/**
 		Iterates the grid a given no. of times
 		@param vn the no. of iterations to perform
+		@return returns the norm-2 of residue
 	*/
-	void relax(int vn);
+	real relax(int vn);
 
 	/**
 		Returns the size of the grid
@@ -131,6 +132,13 @@ private:
 		@param dest the destination grid
 	*/
 	void copy(real **src, real **dest);
+
+	/**
+		Calculates norm-2 of the data provided
+		@param data the source data
+		@return norm2 the norm-2 of the data
+	*/
+	real norm2(real **data);
 
 };
 
