@@ -81,7 +81,13 @@ void MultiGrid::relax(int v)
 {
 	for (int k = 0; k < v; ++k)
 	{
-		/* Gauss, Jacobi, red-black, etc.... */
+		for (int i = 0; i < n; ++i)
+		{
+			for (int j = 0; j < n; ++j)
+			{
+				v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1[j] + v[i-1][j] )/4.0;
+			}
+		}
 	}
 }
 
@@ -129,7 +135,7 @@ void MultiGrid::calc_res_to_temp()
 		for (int j = 1; j < n-1; ++j)
 		{
 			// r = f - Av
-			temp[i][j] = f[i][j] - ( 4*v[i][j] - ( v[i+1][j+1] + v[i-1][j-1] + v[i-1][j+1] + v[i+1][j-1] ) )/h2;
+			temp[i][j] = f[i][j] - ( 4*v[i][j] - ( v[i+1][j] + v[i-1][j] + v[i][j+1] + v[i][j-1] ) )/h2;
 		}
 	}
 
