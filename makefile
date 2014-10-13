@@ -1,4 +1,4 @@
-CFLAGS = -Ofast
+CFLAGS = -Ofast -Wno-write-strings
 CC = g++
 SRC = main.cpp multigrid.cpp multigridsolver.cpp
 OBJ = $(SRC:.cpp = .o)
