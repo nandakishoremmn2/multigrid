@@ -3,6 +3,7 @@
 #include "multigrid.h"
 #include <cmath>
 #include <cstdlib>
+#include <cilk/cilk.h>
 
 /*
 	Constructors and destructors
@@ -66,13 +67,7 @@ void MultiGrid::deallocate(real **var)
 
 void MultiGrid::copy(real **src, real **dest)
 {
-	for (int i = 0; i < n; ++i)
-	{
-		for (int j = 0; j < n; ++j)
-		{
-			dest[i][j] = src[i][j];
-		}
-	}
+	dest[0:n][0:n] = src[0:n][0:n];
 }
 
 real MultiGrid::norm2(real **data)
@@ -104,6 +99,7 @@ real MultiGrid::relax(int vn)
 				v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] + h2*f[i][j])/4.0;
 			}
 		}
+		// v[1:n-2][1:n-2] = ( v[1:n-2][2:n-2] + v[1:n-2][0:n-2] + v[2:n-2][1:n-2] + v[0:n-2][1:n-2] + h2*f[1:n-2][1:n-2])/4.0;
 	}
 
 	calc_res_to_temp();
@@ -147,6 +143,7 @@ void MultiGrid::interp()
 			temp[2*i][2*j] = temp2[i][j];
 		}
 	}
+	// temp[1:n2-2:2][1:n2-2:2] = temp2[1:n2-2][1:n2-2];
 }
 
 void MultiGrid::restrict()
