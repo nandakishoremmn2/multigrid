@@ -1,4 +1,4 @@
-CFLAGS = -fcilkplus -Ofast -Wno-write-strings
+CFLAGS = -Ofast -Wno-write-strings
 CILKFLAGS = -fcilkplus
 OPENMPFLAGS = -fopenmp
 CC = g++-4.9
