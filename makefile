@@ -1,10 +1,18 @@
-CFLAGS = -Ofast -Wno-write-strings
-CC = g++
+CFLAGS = -fcilkplus -Ofast -Wno-write-strings
+CILKFLAGS = -fcilkplus
+OPENMPFLAGS = -fopenmp
+CC = g++-4.9
 SRC = main.cpp multigrid.cpp multigridsolver.cpp
 OBJ = $(SRC:.cpp = .o)
 
-test: $(OBJ)
-	$(CC) $(CFLAGS) -o all $(OBJ)
+all: $(OBJ)
+	$(CC) $(CFLAGS) -o solver_serial $(OBJ)
+
+cilk: $(OBJ)
+	$(CC) $(CFLAGS) $(CILKFLAGS) -o solver_cilk $(OBJ)
+
+openmp: $(OBJ)
+	$(CC) $(CFLAGS) $(OPENMPFLAGS) -o solver_openmp $(OBJ)
 
 clean:
 	rm -f core *.o
