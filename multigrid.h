@@ -80,9 +80,19 @@ public:
 	void copy_temp_to_f();
 
 	/**
+		Copies temp values to v
+	*/
+	void copy_temp_to_v();
+
+	/**
 		Copies v values to temp
 	*/
 	void copy_v_to_temp();
+
+	/**
+		Copies f values to temp
+	*/
+	void copy_f_to_temp();
 
 	/**
 		Adds the temp values to existing v values ( v = v + temp )

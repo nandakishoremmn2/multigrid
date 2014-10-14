@@ -140,11 +140,11 @@ void MultiGrid::interp()
 
 	for (int i = 0; i < n2-1; ++i)
 	{
-		for (int j = 0; j < n2-1; ++j)
+		for (int j = 1; j < n2-1; ++j)
 		{
 			// Between 2 points
 			temp[2*i+1][2*j] = ( temp2[i][j] + temp2[i+1][j] ) / 2.0;
-			temp[2*i][2*j+1] = ( temp2[i][j] + temp2[i][j+1] ) / 2.0;
+			temp[2*j][2*i+1] = ( temp2[j][i] + temp2[j][i+1] ) / 2.0;
 		}
 	}
 
@@ -222,9 +222,19 @@ void MultiGrid::copy_temp_to_f()
 	copy(temp, f);
 }
 
+void MultiGrid::copy_temp_to_v()
+{
+	copy(temp, v);
+}
+
 void MultiGrid::copy_v_to_temp()
 {
 	copy(v, temp);
+}
+
+void MultiGrid::copy_f_to_temp()
+{
+	copy(f, temp);
 }
 
 void MultiGrid::add_temp_to_v()
