@@ -1,11 +1,13 @@
 // forward declared dependencies
 // class MultiGrid;
 
+#include <fstream>
+
 #include "multigridsolver.h"
 
 MultiGridSolver::MultiGridSolver(int grid_density, int no_of_grids)
 {
-	Grid = new MultiGrid(grid_density, no_of_grids-1);
+	Grid = new MultiGrid(grid_density, no_of_grids-1, 1.0);
 
 	// Boundary conditions applied to the finest grid alone
 	Grid->apply_boundary_conditions();
@@ -20,15 +22,30 @@ void MultiGridSolver::solve(real tol)
 {
 	// V(Grid, 1, 5);
 	W(Grid, 2, 5, 5);
-	// FMG(Grid, 5, 1, 5);
-	// Grid->save_grid("out.dat");
+	// FMG(Grid, 1, 1, 5);
+	Grid->save_grid("out.dat");
+	save_data("data.dat");
+}
+
+void MultiGridSolver::save_data(char *filename)
+{
+	std::ofstream outfile(filename);
+
+	for (std::vector<GridData>::iterator i = data.begin(); i != data.end(); ++i)
+	{
+		outfile<<i->iterations<<" ";
+		outfile<<i->residue<<" ";
+		outfile<<i->wu<<" ";
+		outfile<<"\n";
+	}
+
 }
 
 void MultiGridSolver::V(MultiGrid *grid, int v1, int v2)
 {
 	MultiGrid *cgrid = grid->grid2; // coarser grid
 
-	grid->relax(v1);
+	data.push_back(grid->relax(v1));
 	 // If coarser grid exists recursively apply V()
 	if (cgrid)
 	{
@@ -49,14 +66,14 @@ void MultiGridSolver::V(MultiGrid *grid, int v1, int v2)
 		grid->add_temp_to_v();
 	}
 	// Relax fine grid few more times
-	grid->relax(v2);
+	data.push_back(grid->relax(v2));
 }
 
 void MultiGridSolver::W(MultiGrid *grid, int v1, int v2, int mu)
 {
 	MultiGrid *cgrid = grid->grid2; // coarser grid
 
-	grid->relax(v1);
+	data.push_back(grid->relax(v1));
 	 // If coarser grid exists recursively apply V()
 	if (cgrid)
 	{
@@ -80,7 +97,7 @@ void MultiGridSolver::W(MultiGrid *grid, int v1, int v2, int mu)
 		grid->add_temp_to_v();
 	}
 	// Relax fine grid few more times
-	grid->relax(v2);	
+	data.push_back(grid->relax(v2));	
 }
 
 void MultiGridSolver::FMG(MultiGrid *grid, int v0, int v1, int v2)

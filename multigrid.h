@@ -3,6 +3,16 @@
 
 typedef double real;
 
+/**
+	This structure is to be returned by the relax()
+*/
+struct GridData
+{
+	real residue;
+	real wu;
+	int iterations;
+};
+
 class MultiGrid
 {
 public:
@@ -11,8 +21,9 @@ public:
 		Initialises the multigrid
 		@param grid_density The no. of grid points = ( 2^grid_density + 1 )^2
 		@param no_of_child_grids The no. of coarser grids it has ( < grid_density )
+		@param wu Work unit cost for one iteration
 	*/
-	MultiGrid(int grid_density, int no_of_child_grids); 
+	MultiGrid(int grid_density, int no_of_child_grids, float wu); 
 
 	~MultiGrid();
 
@@ -21,7 +32,7 @@ public:
 		@param vn the no. of iterations to perform
 		@return returns the norm-2 of residue
 	*/
-	real relax(int vn);
+	GridData relax(int vn);
 
 	/**
 		Returns the size of the grid
@@ -112,6 +123,11 @@ private:
 		RHS of the equation Au=f
 	*/
 	real **f;
+
+	/**
+		Work unit cost for each itertion
+	*/
+	float WU;
 
 	/**
 		Initialises and allocates memory for the pointer variable passed

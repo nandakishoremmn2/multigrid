@@ -1,6 +1,7 @@
 #ifndef MULTIGRIDSOLVER_H
 #define MULTIGRIDSOLVER_H
 
+#include <vector>
 #include "multigrid.h"
 
 class MultiGridSolver
@@ -20,8 +21,19 @@ public:
 	*/
 	void solve(real tol);
 
+	/**
+		Save the data variable to file
+		@param filename data file name
+	*/
+	void save_data(char *filename);
+
 private:
 	MultiGrid *Grid;
+
+	/**
+		Holds the residue, iteration and work units spend data
+	*/
+	std::vector<GridData> data;
 
 	/**
 		V cycle scheme

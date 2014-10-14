@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 #include "multigrid.h"
 #include <cmath>
 #include <cstdlib>
@@ -7,9 +6,11 @@
 /*
 	Constructors and destructors
 */
-MultiGrid::MultiGrid(int grid_density, int no_of_child_grids)
+MultiGrid::MultiGrid(int grid_density, int no_of_child_grids, float wu)
 {
 	n = pow(2, grid_density) + 1;
+
+	WU = wu;
 
 	h = pow(.5, grid_density);
 	h2 = h*h;
@@ -20,7 +21,7 @@ MultiGrid::MultiGrid(int grid_density, int no_of_child_grids)
 	temp = initialise();
 
 	// Initialise the coarser child grids
-	grid2 = ( no_of_child_grids > 0 ) ? new MultiGrid(grid_density-1, no_of_child_grids-1) : NULL;
+	grid2 = ( no_of_child_grids > 0 ) ? new MultiGrid(grid_density-1, no_of_child_grids-1, WU/4.0) : NULL;
 }
 
 MultiGrid::~MultiGrid()
@@ -93,7 +94,7 @@ real MultiGrid::norm2(real **data)
 /*
 	Public methods
 */
-real MultiGrid::relax(int vn)
+GridData MultiGrid::relax(int vn)
 {
 	for (int k = 0; k < vn; ++k)
 	{
@@ -107,7 +108,14 @@ real MultiGrid::relax(int vn)
 	}
 
 	calc_res_to_temp();
-	return norm2(temp);
+
+	GridData data = {
+		norm2(temp),
+		vn*WU,
+		vn
+	};
+
+	return data;
 }
 
 int MultiGrid::getSize()
