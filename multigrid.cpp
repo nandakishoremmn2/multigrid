@@ -46,7 +46,7 @@ real **MultiGrid::initialise()
 		var[i] = new real[n];
 	}
 
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 0; i < n; ++i)
 	{
 		for (int j = 0; j < n; ++j)
@@ -68,7 +68,7 @@ void MultiGrid::deallocate(real **var)
 
 void MultiGrid::copy(real **src, real **dest)
 {
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 0; i < n; ++i)
 	{
 		for (int j = 0; j < n; ++j)
@@ -82,7 +82,7 @@ real MultiGrid::norm2(real **data)
 {
 	// L-squared norm
 	real norm2val = 0;
-	#pragma omp parallel for collapse(2) reduction(+:norm2val)
+	#pragma omp parallel for reduction(+:norm2val)
 	for (int i = 0; i < n; ++i)
 	{
 		for (int j = 0; j < n; ++j)
@@ -101,7 +101,7 @@ GridData MultiGrid::relax(int vn)
 {
 	for (int k = 0; k < vn; ++k)
 	{
-		#pragma omp parallel for collapse(2)
+		#pragma omp parallel for
 		for (int i = 1; i < n-1; ++i)
 		{
 			for (int j = 1; j < n-1; ++j)
@@ -133,7 +133,7 @@ void MultiGrid::interp()
 	real **temp2 = grid2->temp;
 	int n2 = grid2->getSize();
 
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 0; i < n2-1; ++i)
 	{
 		for (int j = 0; j < n2-1; ++j)
@@ -143,7 +143,7 @@ void MultiGrid::interp()
 		}
 	}
 
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 0; i < n2-1; ++i)
 	{
 		for (int j = 1; j < n2-1; ++j)
@@ -154,7 +154,7 @@ void MultiGrid::interp()
 		}
 	}
 
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 1; i < n2-1; ++i)
 	{
 		for (int j = 1; j < n2-1; ++j)
@@ -170,7 +170,7 @@ void MultiGrid::restrict()
 	real **temp2 = grid2->temp;
 	int n2 = grid2->getSize();
 
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 1; i < n2-1; ++i)
 	{
 		for (int j = 1; j < n2-1; ++j)
@@ -199,7 +199,7 @@ void MultiGrid::apply_boundary_conditions()
 
 void MultiGrid::set_v(real val)
 {
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 0; i < n; ++i)
 	{
 		for (int j = 0; j < n; ++j)
@@ -211,7 +211,7 @@ void MultiGrid::set_v(real val)
 
 void MultiGrid::calc_res_to_temp()
 {
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 1; i < n-1; ++i)
 	{
 		for (int j = 1; j < n-1; ++j)
@@ -251,7 +251,7 @@ void MultiGrid::copy_f_to_temp()
 
 void MultiGrid::add_temp_to_v()
 {
-	#pragma omp parallel for collapse(2)
+	#pragma omp parallel for
 	for (int i = 1; i < n-1; ++i)
 	{
 		for (int j = 1; j < n-1; ++j)
