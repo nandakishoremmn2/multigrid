@@ -8,6 +8,7 @@
 
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+from matplotlib import cm
 from numpy import loadtxt, linspace, meshgrid
 import sys
 
@@ -21,8 +22,15 @@ n = z.shape[0]
 
 x, y = meshgrid(linspace(0,1,n), linspace(0,1,n))
 
-ax.plot_surface(x, y, z,  rstride=4, cstride=4, color='b')
-# ax.contourf(x, y, z,  100, rstride=4, cstride=4, color='b')
+stride = max([(n-1)/64, 1])
+
+ax.plot_surface(x, y, z,  
+	rstride=stride, 
+	cstride=stride, 
+	cmap=cm.coolwarm, 
+	linewidth=0
+)
+# ax.contourf(x, y, z,  100, cstride=4, color='b')
 ax.axis('image')
 
 plt.show()
