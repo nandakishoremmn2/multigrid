@@ -194,7 +194,8 @@ void MultiGrid::set_v(real val)
 			v[i][j] = val;
 		}
 	}
-	// v[0:n][0:n] = val;
+	real **var = v;
+	var[0:n][0:n] = val;
 }
 
 void MultiGrid::calc_res_to_temp()
