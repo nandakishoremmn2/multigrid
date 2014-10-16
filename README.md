@@ -14,7 +14,7 @@ in branch cilk -
 
 or
 
-in branch openmp(will be added soon) -
+in branch openmp -
 `make openmp && time ./solver_openmp`
 
 To visualize solution run `python plot.py out.dat`
