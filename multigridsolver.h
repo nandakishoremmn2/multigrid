@@ -9,10 +9,9 @@ class MultiGridSolver
 public:
 	/**
 		Initialises the solver
-		@param grid_density The no. of grid points on the finest grid = ( 2^grid_density + 1 )^2
-		@param no_of_grids The no. of grids to use ( < grid_density )
+		@param data contains the scheme to use and the parameters
 	*/
-	MultiGridSolver(int grid_density, int no_of_grids);
+	MultiGridSolver(int *data);
 	~MultiGridSolver();
 
 	/**
@@ -29,6 +28,16 @@ public:
 
 private:
 	MultiGrid *Grid;
+
+	/**
+		The scheme to use (0, V cycle) (1, Mu cycle) (2, FMG)
+	*/
+	int scheme;
+
+	/**
+		Scheme parameters
+	*/
+	int v0, v1, v2, mu, cycles;
 
 	/**
 		Holds the residue, iteration and work units spend data

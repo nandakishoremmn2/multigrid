@@ -2,11 +2,36 @@
 // class MultiGrid;
 
 #include <fstream>
+#include <stdio.h>
 
 #include "multigridsolver.h"
 
-MultiGridSolver::MultiGridSolver(int grid_density, int no_of_grids)
+MultiGridSolver::MultiGridSolver(int *data)
 {
+	int grid_density = data[0];
+	int no_of_grids = data[1];
+
+	scheme = data[2];
+	switch(scheme)
+	{
+		case 0:
+			v1 		= data[3];
+			v2 		= data[4];
+			cycles 	= data[5];
+			break;
+		case 1:
+			v1 		= data[3];
+			v2 		= data[4];
+			mu 		= data[5];
+			cycles 	= data[6];
+			break;
+		case 2:
+			v0 		= data[3];
+			v1 		= data[4];
+			v2 		= data[5];
+			break;
+	}
+
 	Grid = new MultiGrid(grid_density, no_of_grids-1, 1.0);
 
 	// Boundary conditions applied to the finest grid alone
@@ -20,19 +45,29 @@ MultiGridSolver::~MultiGridSolver()
 
 void MultiGridSolver::solve(real tol)
 {
-	// for (int i = 0; i < 30; ++i)
-	// {
-	// 	data.push_back(Grid->relax(10));
-	// }
-	// for (int i = 0; i < 13; ++i)
-	// {
-	// 	V(Grid, 10, 5);
-	// }
-	// for (int i = 0; i < 7; ++i)
-	// {
-	// 	W(Grid, 5, 5, 3);
-	// }
-	FMG(Grid, 20, 5, 5);
+	switch(scheme)
+	{
+		case 0:
+			for (int i = 0; i < cycles; ++i)
+			{
+				V(Grid, v1, v2);
+			}
+			break;
+		case 1:
+			for (int i = 0; i < cycles; ++i)
+			{
+				W(Grid, v1, v2, mu);
+			}
+			break;
+		case 2:
+			FMG(Grid, v0, v1, v2);
+			break;
+		default:
+			for (int i = 0; i < 30; ++i)
+			{
+				data.push_back(Grid->relax(10));
+			}		
+	}
 	Grid->save_grid("out.dat");
 	save_data("data.dat");
 }
