@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <stdio.h>
+#include <cstdlib>
 
 #include "multigridsolver.h"
 
@@ -48,24 +49,28 @@ void MultiGridSolver::solve(real tol)
 	switch(scheme)
 	{
 		case 0:
-			for (int i = 0; i < cycles; ++i)
+			while(Grid->get_L2norm() > tol)
 			{
 				V(Grid, v1, v2);
 			}
 			break;
 		case 1:
-			for (int i = 0; i < cycles; ++i)
+			while(Grid->get_L2norm() > tol)
 			{
 				W(Grid, v1, v2, mu);
 			}
 			break;
 		case 2:
 			FMG(Grid, v0, v1, v2);
+			while(Grid->get_L2norm() > tol)
+			{
+				V(Grid, v1, v2);
+			}
 			break;
 		default:
-			for (int i = 0; i < 30; ++i)
+			for (int i = 0; i < scheme-2; ++i)
 			{
-				data.push_back(Grid->relax(10));
+				data.push_back(Grid->relax(1));
 			}		
 	}
 	Grid->save_grid("out.dat");
@@ -84,6 +89,12 @@ void MultiGridSolver::save_data(char *filename)
 		outfile<<"\n";
 	}
 
+}
+
+void MultiGridSolver::save()
+{
+	Grid->save_grid("out.dat");
+	save_data("data.dat");
 }
 
 void MultiGridSolver::V(MultiGrid *grid, int v1, int v2)

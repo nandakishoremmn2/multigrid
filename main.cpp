@@ -2,26 +2,36 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <csignal>
 
-#define GRID_DENSITY_LEVEL 9
-#define NUM_GRIDS 6
-#define ACCURACY 1e-4
+MultiGridSolver *solver_ptr;
 
 int *get_input(int argc, char *argv[]);
+void signalHandler( int signum );
 
 int main (int argc, char *argv[]) 
 {
 	int *input = get_input(argc, argv);
 
 	MultiGridSolver solver(input);
-	solver.solve(ACCURACY);
+	solver_ptr = &solver;
+
+	signal(SIGINT, signalHandler);
+
+	solver.solve(1e-9);
 	return 0;
+}
+
+void signalHandler( int signum )
+{
+	solver_ptr->save();
+	exit(0);  
 }
 
 int *get_input(int argc, char *argv[])
 {
 	int *data = new int[7];
-	if( argc >= 7 && argc <= 8 ) // If cmd args are present
+	if( argc >= 6 && argc <= 7 ) // If cmd args are present
 	{
 		for (int i = 0; i < argc-1; ++i)
 		{
@@ -39,12 +49,12 @@ int *get_input(int argc, char *argv[])
 		switch(data[2])
 		{
 			case 0:
-				std::cout<<"Enter v1, v2, cycles : ";
-				std::cin>>data[3]>>data[4]>>data[5];
+				std::cout<<"Enter v1, v2";
+				std::cin>>data[3]>>data[4];
 				break;
 			case 1:
-				std::cout<<"Enter v1, v2, mu, cycles : ";
-				std::cin>>data[3]>>data[4]>>data[5]>>data[6];
+				std::cout<<"Enter v1, v2, mu";
+				std::cin>>data[3]>>data[4]>>data[5];
 				break;
 			case 2:
 				std::cout<<"Enter v0, v1, v2 : ";

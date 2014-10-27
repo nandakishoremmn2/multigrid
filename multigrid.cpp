@@ -260,3 +260,9 @@ void MultiGrid::save_grid(char *filename)
 		outfile<<"\n";
 	}
 }
+
+real MultiGrid::get_L2norm()
+{
+	calc_res_to_temp();
+	return norm2(temp);
+}

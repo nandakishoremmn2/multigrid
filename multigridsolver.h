@@ -26,6 +26,12 @@ public:
 	*/
 	void save_data(char *filename);
 
+	/**
+		Save the grid and convergence data and exits
+		@param signum
+	*/
+	void save();
+
 private:
 	MultiGrid *Grid;
 
