@@ -109,6 +109,11 @@ public:
 	*/
 	real **temp;
 
+	/**
+		Returns the L squared norm of residue
+	*/
+	real get_L2norm();
+
 private:
 	/**
 		The size of the grid
