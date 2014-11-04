@@ -33,7 +33,7 @@ MultiGridSolver::MultiGridSolver(int *data)
 			break;
 	}
 
-	Grid = new MultiGrid(grid_density, no_of_grids-1, 1.0);
+	Grid = new MultiGrid(grid_density, no_of_grids-1, 1.0, 0);
 
 	// Boundary conditions applied to the finest grid alone
 	Grid->apply_boundary_conditions();
@@ -46,6 +46,13 @@ MultiGridSolver::~MultiGridSolver()
 
 void MultiGridSolver::solve(real tol)
 {
+	GridData idata = {
+		Grid->get_L2norm(),
+		1,
+		0
+	};
+	data.push_back(idata);
+
 	switch(scheme)
 	{
 		case 0:
@@ -68,10 +75,8 @@ void MultiGridSolver::solve(real tol)
 			}
 			break;
 		default:
-			for (int i = 0; i < scheme-2; ++i)
-			{
-				data.push_back(Grid->relax(1));
-			}		
+			F(Grid, 1e-4, .3, 5);
+			data.push_back(Grid->relax(20));
 	}
 	Grid->save_grid("out.dat");
 	save_data("data.dat");
@@ -86,6 +91,7 @@ void MultiGridSolver::save_data(char *filename)
 		outfile<<i->iterations<<" ";
 		outfile<<i->residue<<" ";
 		outfile<<i->wu<<" ";
+		outfile<<i->level<<" ";
 		outfile<<"\n";
 	}
 
@@ -188,5 +194,52 @@ void MultiGridSolver::FMG(MultiGrid *grid, int v0, int v1, int v2)
 	for (int i = 0; i < v0; ++i)
 	{
 		V(grid, v1, v2);	
+	}
+}
+
+void MultiGridSolver::F(MultiGrid *grid, real alpha, real beta, int iter_max)
+{
+	MultiGrid *cgrid = grid->grid2; // coarser grid
+
+	real R0 = grid->get_L2norm();
+	real R2 = 10000, R1 = 1;
+	for (int i = 0; i < iter_max && R2 > alpha*R0; ++i)
+	{
+		grid->relax_once();
+		// V(grid, 0, 1);
+		R1 = R2;
+		R2 = grid->get_L2norm();
+
+		// If poor convergence rates perform coarse grid corrections
+		if(i > 1 && R2 > R1*beta)
+		{
+			// Restrict residue to coarse grid
+			grid->calc_res_to_temp();
+			grid->restrict();
+			cgrid->copy_temp_to_f();
+
+			// Set error 0 on coarse grid
+			cgrid->set_v(0);
+
+			// Apply flex cycles to coarse grid
+			F(cgrid, alpha, beta, iter_max);
+
+			// Interpolate and add error to fine grid
+			cgrid->copy_v_to_temp();
+			grid->interp();
+			grid->add_temp_to_v();
+
+			i--;
+		}
+
+		GridData idata = {
+			R2,
+			grid->get_wu(),
+			1,
+			grid->get_level()
+		};
+
+		data.push_back(idata);
+
 	}
 }

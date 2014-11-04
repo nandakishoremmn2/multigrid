@@ -66,6 +66,11 @@ private:
 	*/
 	void FMG(MultiGrid *grid, int v0, int v1, int v2);
 
+	/**
+		F(lexible) cycle scheme
+	*/
+	void F(MultiGrid *grid, real alpha, real beta, int iter_max);
+
 };
 
 #endif // MULTIGRIDSOLVER_H
