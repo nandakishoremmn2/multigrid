@@ -6,11 +6,12 @@
 /*
 	Constructors and destructors
 */
-MultiGrid::MultiGrid(int grid_density, int no_of_child_grids, float wu)
+MultiGrid::MultiGrid(int grid_density, int no_of_child_grids, float wu, int lvl)
 {
 	n = pow(2, grid_density) + 1;
 
 	WU = wu;
+	level = lvl;
 
 	h = pow(.5, grid_density);
 	h2 = h*h;
@@ -21,7 +22,7 @@ MultiGrid::MultiGrid(int grid_density, int no_of_child_grids, float wu)
 	temp = initialise();
 
 	// Initialise the coarser child grids
-	grid2 = ( no_of_child_grids > 0 ) ? new MultiGrid(grid_density-1, no_of_child_grids-1, WU/4.0) : NULL;
+	grid2 = ( no_of_child_grids > 0 ) ? new MultiGrid(grid_density-1, no_of_child_grids-1, WU/4.0, level+1) : NULL;
 }
 
 MultiGrid::~MultiGrid()
@@ -94,17 +95,23 @@ real MultiGrid::norm2(real **data)
 /*
 	Public methods
 */
+
+void MultiGrid::relax_once()
+{
+	for (int i = 1; i < n-1; ++i)
+	{
+		for (int j = 1; j < n-1; ++j)
+		{
+			v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] + h2*f[i][j])/4.0;
+		}
+	}
+}
+
 GridData MultiGrid::relax(int vn)
 {
 	for (int k = 0; k < vn; ++k)
 	{
-		for (int i = 1; i < n-1; ++i)
-		{
-			for (int j = 1; j < n-1; ++j)
-			{
-				v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] + h2*f[i][j])/4.0;
-			}
-		}
+		relax_once();
 	}
 
 	calc_res_to_temp();
@@ -112,7 +119,8 @@ GridData MultiGrid::relax(int vn)
 	GridData data = {
 		norm2(temp),
 		vn*WU,
-		vn
+		vn,
+		get_level()
 	};
 
 	return data;
@@ -265,4 +273,14 @@ real MultiGrid::get_L2norm()
 {
 	calc_res_to_temp();
 	return norm2(temp);
+}
+
+real MultiGrid::get_wu()
+{
+	return WU;
+}
+
+int MultiGrid::get_level()
+{
+	return level;
 }

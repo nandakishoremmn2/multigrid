@@ -11,6 +11,7 @@ struct GridData
 	real residue;
 	real wu;
 	int iterations;
+	int level;
 };
 
 class MultiGrid
@@ -22,8 +23,9 @@ public:
 		@param grid_density The no. of grid points = ( 2^grid_density + 1 )^2
 		@param no_of_child_grids The no. of coarser grids it has ( < grid_density )
 		@param wu Work unit cost for one iteration
+		@param lvl The grid level ( 0 for coarsest )
 	*/
-	MultiGrid(int grid_density, int no_of_child_grids, float wu); 
+	MultiGrid(int grid_density, int no_of_child_grids, float wu, int lvl); 
 
 	~MultiGrid();
 
@@ -33,6 +35,11 @@ public:
 		@return returns the norm-2 of residue
 	*/
 	GridData relax(int vn);
+
+	/**
+		Relaes the grid once
+	*/
+	void relax_once();
 
 	/**
 		Returns the size of the grid
@@ -111,8 +118,20 @@ public:
 
 	/**
 		Returns the L squared norm of residue
+			Calculate redidue and stores to temp and
+			then finds the norm2 of temp
 	*/
 	real get_L2norm();
+
+	/**
+		Gets work units per iteration of the grid
+	*/
+	real get_wu();
+
+	/**
+		Gets the grid level
+	*/
+	int get_level();
 
 private:
 	/**
@@ -145,6 +164,11 @@ private:
 	float WU;
 
 	/**
+		Grid level
+	*/
+	float level;
+
+	/**
 		Initialises and allocates memory for the pointer variable passed
 		@param var pointer to the variable
 	*/
@@ -170,7 +194,6 @@ private:
 		@return norm2 the norm-2 of the data
 	*/
 	real norm2(real **data);
-
 };
 
 #endif // MULTIGRID_H
