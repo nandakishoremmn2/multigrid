@@ -14,5 +14,8 @@ cilk: $(OBJ)
 openmp: $(OBJ)
 	$(CC) $(CFLAGS) $(OPENMPFLAGS) -o solver_openmp $(OBJ)
 
+cuda:
+	nvcc -O3 main.cpp multigridsolver.cpp multigrid.cu -o solver_cuda
+
 clean:
 	rm -f core *.o a.out out.dat data.dat nohup.out

@@ -1,6 +1,8 @@
 #ifndef MULTIGRID_H
 #define MULTIGRID_H
 
+#include <vector_types.h>
+
 typedef double real;
 
 /**
@@ -119,7 +121,8 @@ public:
 	/**
 		Temporary variable
 	*/
-	real **temp;
+	real *temp;
+	real *d_temp;
 
 	/**
 		Returns the L squared norm of residue
@@ -138,7 +141,15 @@ public:
 	*/
 	int get_level();
 
-private:
+	int ThreadsPerBlock;
+	dim3 dimBlock;
+	dim3 dimBlock1d;
+
+	// calculate number of blocks along X and Y in a 2D CUDA "grid"
+	dim3 dimGrid;
+	dim3 dimGrid1d;
+
+// private:
 	/**
 		The size of the grid
 	*/
@@ -156,12 +167,12 @@ private:
 	/**
 		Stores the solution at all levels
 	*/
-	real **v;
+	real *v;
 
 	/**
 		RHS of the equation Au=f
 	*/
-	real **f;
+	real *f;
 
 	/**
 		Work unit cost for each itertion
@@ -177,28 +188,28 @@ private:
 		Initialises and allocates memory for the pointer variable passed
 		@param var pointer to the variable
 	*/
-	real **initialise();
+	real *initialise();
 
 	/**
 		Does the opposite of initialise
 		@param var pointer to freed
 		@see initialise
 	*/
-	void deallocate(real **var);
+	void deallocate(real *var);
 
 	/**
 		Copies values from one grid to another
 		@param src the source grid
 		@param dest the destination grid
 	*/
-	void copy(real **src, real **dest);
+	void copy(real *src, real *dest);
 
 	/**
 		Calculates norm-2 of the data provided
 		@param data the source data
 		@return norm2 the norm-2 of the data
 	*/
-	real norm2(real **data);
+	real norm2(real *data);
 };
 
 #endif // MULTIGRID_H
