@@ -1,7 +1,7 @@
 CFLAGS = -O3 -Wno-write-strings
 CILKFLAGS = -fcilkplus
 OPENMPFLAGS = -fopenmp
-CC = g++-4.9
+CC = g++
 SRC = main.cpp multigrid.cpp multigridsolver.cpp
 OBJ = $(SRC:.cpp = .o)
 
@@ -15,4 +15,4 @@ openmp: $(OBJ)
 	$(CC) $(CFLAGS) $(OPENMPFLAGS) -o solver_openmp $(OBJ)
 
 clean:
-	rm -f core *.o
+	rm -f core *.o a.out out.dat data.dat nohup.out

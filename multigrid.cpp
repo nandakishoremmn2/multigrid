@@ -107,11 +107,44 @@ void MultiGrid::relax_once()
 	}
 }
 
+
+void MultiGrid::relax_once_rb()
+{
+	for (int i = 1; i < n-1; i+=2)
+	{
+		for (int j = 1; j < n-1; j+=2)
+		{
+			v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] + h2*f[i][j])/4.0;
+		}
+	}
+	for (int i = 1; i < n-1; i+=2)
+	{
+		for (int j = 2; j < n-1; j+=2)
+		{
+			v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] + h2*f[i][j])/4.0;
+		}
+	}
+	for (int i = 2; i < n-1; i+=2)
+	{
+		for (int j = 1; j < n-1; j+=2)
+		{
+			v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] + h2*f[i][j])/4.0;
+		}
+	}
+	for (int i = 2; i < n-1; i+=2)
+	{
+		for (int j = 2; j < n-1; j+=2)
+		{
+			v[i][j] = ( v[i][j+1] + v[i][j-1] + v[i+1][j] + v[i-1][j] + h2*f[i][j])/4.0;
+		}
+	}
+}
+
 GridData MultiGrid::relax(int vn)
 {
 	for (int k = 0; k < vn; ++k)
 	{
-		relax_once();
+		relax_once_rb();
 	}
 
 	calc_res_to_temp();

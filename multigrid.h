@@ -42,6 +42,11 @@ public:
 	void relax_once();
 
 	/**
+		Relaes the grid once (red-black)
+	*/
+	void relax_once_rb();
+
+	/**
 		Returns the size of the grid
 		@return The size of the grid
 	*/
