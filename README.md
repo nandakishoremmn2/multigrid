@@ -17,6 +17,11 @@ or
 in branch openmp -
 `make openmp && time ./solver_openmp`
 
+or
+
+in branch cuda -
+`make cuda && time ./solver_cuda`
+
 To visualize solution run `python plot.py out.dat`
 
 To plot convergence history run `python plot_data.py data.dat`
